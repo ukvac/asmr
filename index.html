@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soft Sort Studio — ASMR Cleaning & Sorting</title>
+  <meta name="description" content="A cozy ASMR cleaning and sorting game built for GitHub Pages." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-ambient="rain">
+  <div class="page-noise"></div>
+  <div class="page-gradient gradient-a"></div>
+  <div class="page-gradient gradient-b"></div>
+  <div class="page-gradient gradient-c"></div>
+  <div class="ambient-veil"></div>
+
+  <div class="menu-overlay" id="menuOverlay" aria-modal="true" role="dialog">
+    <div class="menu-card glass">
+      <div class="menu-copy">
+        <p class="eyebrow">Soft Sort Studio</p>
+        <h1>Slow, tidy, and soothing.</h1>
+        <p class="menu-text">
+          Restore peaceful little spaces by placing objects, wiping away dust, and letting gentle ambience play in the background.
+          Built with plain HTML, CSS, and JavaScript, so you can host it directly on GitHub Pages.
+        </p>
+      </div>
+
+      <div class="menu-grid">
+        <section class="menu-panel soft-panel">
+          <p class="section-label">What’s inside</p>
+          <ul class="feature-list">
+            <li>5 handcrafted rooms</li>
+            <li>Drag, place, wipe, and polish</li>
+            <li>Local save that remembers progress</li>
+            <li>Generated ambient audio modes</li>
+            <li>Mobile and desktop friendly</li>
+          </ul>
+        </section>
+
+        <section class="menu-panel ambient-panel">
+          <p class="section-label">Ambient mood</p>
+          <div class="ambient-selectors" id="menuAmbientButtons">
+            <button class="pill-btn ambient-btn active" data-ambient-mode="rain">Rain hush</button>
+            <button class="pill-btn ambient-btn" data-ambient-mode="night">Night hum</button>
+            <button class="pill-btn ambient-btn" data-ambient-mode="ocean">Ocean drift</button>
+          </div>
+          <p class="tiny-note">Audio starts after your first click or tap. Headphones recommended.</p>
+        </section>
+      </div>
+
+      <div class="menu-summary soft-panel" id="menuSummary">
+        <div>
+          <p class="section-label">Save summary</p>
+          <strong id="menuProgressLabel">Fresh start</strong>
+        </div>
+        <div class="summary-pills">
+          <div class="summary-pill"><span>Stars</span><strong id="menuStars">0</strong></div>
+          <div class="summary-pill"><span>Rooms done</span><strong id="menuRooms">0 / 5</strong></div>
+        </div>
+      </div>
+
+      <div class="menu-actions">
+        <button class="primary-btn" id="startBtn">Begin slow cleaning</button>
+        <button class="secondary-btn" id="newGameBtn">New game</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="app-shell">
+    <header class="topbar glass">
+      <div>
+        <p class="eyebrow">ASMR cleaning & sorting</p>
+        <h2>Soft Sort Studio</h2>
+        <p class="subtitle">Place objects carefully, wipe slowly, and let the room settle.</p>
+      </div>
+
+      <div class="top-actions">
+        <div class="save-pill saved" id="saveStatus">Saved</div>
+        <button class="secondary-btn" id="menuBtn">Menu</button>
+        <button class="secondary-btn" id="muteBtn" aria-pressed="false">Sound: On</button>
+        <button class="secondary-btn danger" id="resetBtn">Reset Save</button>
+      </div>
+    </header>
+
+    <section class="dashboard">
+      <div class="panel glass stats-panel">
+        <div class="stat-card">
+          <span class="stat-label">Stars</span>
+          <strong id="starsValue">0</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Rooms cleared</span>
+          <strong id="roomsValue">0 / 5</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Current room</span>
+          <strong id="roomNameValue">Desk</strong>
+        </div>
+      </div>
+
+      <div class="panel glass progress-panel">
+        <div class="progress-heading">
+          <div>
+            <p class="section-label">Room ritual</p>
+            <h3 id="taskHeading">Cozy Desk Reset</h3>
+          </div>
+          <div class="task-pill" id="taskPill">0 / 0 done</div>
+        </div>
+
+        <div class="progress-bar-wrap" aria-label="Room completion">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="room-story" id="roomStory"></div>
+      </div>
+    </section>
+
+    <section class="game-area">
+      <aside class="inventory glass">
+        <div class="inventory-head">
+          <div>
+            <p class="section-label">Tray</p>
+            <h3>Items to place</h3>
+          </div>
+          <p class="tiny-note">Drag items into the glowing outlines.</p>
+        </div>
+
+        <div class="tray" id="tray"></div>
+
+        <div class="soft-panel inventory-note">
+          Wipe the misty patches by slowly swiping across them. Every action saves automatically.
+        </div>
+
+        <div class="task-list" id="taskList"></div>
+      </aside>
+
+      <section class="scene-panel glass">
+        <div class="scene-header">
+          <div>
+            <p class="section-label">Scene</p>
+            <h3 id="sceneTitle">Cozy Desk</h3>
+          </div>
+
+          <div class="ambient-control-group">
+            <button class="icon-toggle" id="ambientToggleBtn" aria-pressed="true">Ambient: On</button>
+            <div class="ambient-selectors" id="headerAmbientButtons">
+              <button class="pill-btn ambient-btn active" data-ambient-mode="rain">Rain</button>
+              <button class="pill-btn ambient-btn" data-ambient-mode="night">Night</button>
+              <button class="pill-btn ambient-btn" data-ambient-mode="ocean">Ocean</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-tip-row">
+          <p class="scene-tip" id="sceneTip">A warm monitor glow and a clear desk feel best.</p>
+          <div class="unlock-pill" id="unlockLabel">Room 1 of 5</div>
+        </div>
+
+        <div class="scene" id="scene">
+          <div class="sparkle-layer" id="sparkleLayer"></div>
+          <div class="mist-layer"></div>
+
+          <div class="scene-backdrop desk-bg active" data-room-bg="desk">
+            <div class="wall-panel"></div>
+            <div class="window-glow"></div>
+            <div class="desk-surface"></div>
+            <div class="monitor"></div>
+            <div class="lamp-stem"></div>
+            <div class="lamp-glow"></div>
+            <div class="desk-plant"></div>
+          </div>
+
+          <div class="scene-backdrop vanity-bg" data-room-bg="vanity">
+            <div class="tile-strip"></div>
+            <div class="mirror"></div>
+            <div class="sink"></div>
+            <div class="shelf"></div>
+            <div class="towel-stack"></div>
+            <div class="gold-ring"></div>
+          </div>
+
+          <div class="scene-backdrop kitchen-bg" data-room-bg="kitchen">
+            <div class="window"></div>
+            <div class="counter"></div>
+            <div class="backsplash"></div>
+            <div class="board"></div>
+            <div class="rail"></div>
+            <div class="hanging-cups"></div>
+          </div>
+
+          <div class="scene-backdrop bedroom-bg" data-room-bg="bedroom">
+            <div class="headboard"></div>
+            <div class="bed"></div>
+            <div class="pillows"></div>
+            <div class="nightstand"></div>
+            <div class="reading-lamp"></div>
+            <div class="moon-window"></div>
+          </div>
+
+          <div class="scene-backdrop tea-bg" data-room-bg="tea">
+            <div class="arched-window"></div>
+            <div class="tea-table"></div>
+            <div class="tea-shelf"></div>
+            <div class="paper-lamp"></div>
+            <div class="floor-cushion"></div>
+            <div class="tea-plant"></div>
+          </div>
+
+          <div class="dropzone-layer" id="dropzoneLayer"></div>
+          <div class="placed-layer" id="placedLayer"></div>
+          <div class="dust-layer" id="dustLayer"></div>
+        </div>
+      </section>
+
+      <aside class="right-rail glass">
+        <div class="soft-panel right-note">
+          <p class="section-label">Room flow</p>
+          <h3 id="ritualTitle">Take your time</h3>
+          <p id="ritualCopy">Rooms unlock one by one. Revisit any completed room whenever you like.</p>
+        </div>
+
+        <div class="room-nav" id="roomNav"></div>
+
+        <div class="soft-panel tiny-guides">
+          <p class="section-label">Controls</p>
+          <p>Desktop: click + drag items, then swipe across dusty areas.</p>
+          <p>Mobile: touch + drag items, then scrub the cloudy patches with your finger.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <template id="taskTemplate">
+    <div class="task-item">
+      <div class="task-dot"></div>
+      <span class="task-text"></span>
+    </div>
+  </template>
+
+  <template id="roomButtonTemplate">
+    <button class="room-card">
+      <span class="room-card-top">
+        <span class="room-card-name"></span>
+        <span class="room-card-index"></span>
+      </span>
+      <span class="room-card-meta"></span>
+    </button>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
